@@ -29,7 +29,7 @@
                         <configuration>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.revolut.task.Controller</mainClass>
+                                    <mainClass>com.revolut.task.Application</mainClass>
                                 </manifest>
                             </archive>
                             <descriptorRefs>

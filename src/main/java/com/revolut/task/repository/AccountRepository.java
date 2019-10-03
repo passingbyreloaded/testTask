@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface AccountRepository {
 
-    Optional<Account> getByNumber(Long number);
+    Optional<Account> getByNumber(String number);
 }

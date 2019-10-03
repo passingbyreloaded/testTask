@@ -4,26 +4,26 @@ import java.math.BigDecimal;
 
 public class MoneyTransferDTO {
 
-    private Long fromAccountId;
+    private String accountNumberFrom;
 
-    private Long toAccountId;
+    private String accountNumberTo;
 
     private BigDecimal amount;
 
-    public Long getFromAccountId() {
-        return fromAccountId;
+    public String getAccountNumberFrom() {
+        return accountNumberFrom;
     }
 
-    public void setFromAccountId(Long fromAccountId) {
-        this.fromAccountId = fromAccountId;
+    public void setAccountNumberFrom(String accountNumberFrom) {
+        this.accountNumberFrom = accountNumberFrom;
     }
 
-    public Long getToAccountId() {
-        return toAccountId;
+    public String getAccountNumberTo() {
+        return accountNumberTo;
     }
 
-    public void setToAccountId(Long toAccountId) {
-        this.toAccountId = toAccountId;
+    public void setAccountNumberTo(String accountNumberTo) {
+        this.accountNumberTo = accountNumberTo;
     }
 
     public BigDecimal getAmount() {

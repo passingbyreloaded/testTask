@@ -5,20 +5,31 @@ import java.util.Objects;
 
 public class Account {
 
-    private Long number;
+    private Long id;
+
+    private String number;
 
     private volatile BigDecimal balance;
 
-    public Account(Long number, BigDecimal balance) {
+    public Account(Long id, String number, BigDecimal balance) {
+        this.id = id;
         this.number = number;
         this.balance = balance;
     }
 
-    public Long getNumber() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNumber() {
         return number;
     }
 
-    public void setNumber(Long number) {
+    public void setNumber(String number) {
         this.number = number;
     }
 
@@ -35,11 +46,20 @@ public class Account {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Account account = (Account) o;
-        return Objects.equals(number, account.number);
+        return id.equals(account.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(number);
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", number='" + number + '\'' +
+                ", balance=" + balance +
+                '}';
     }
 }
