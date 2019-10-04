@@ -4,7 +4,9 @@ import com.google.gson.JsonSyntaxException;
 import com.revolut.task.dto.MoneyTransferDTO;
 import com.revolut.task.exception.AccountNotFoundException;
 import com.revolut.task.exception.InvalidAmountException;
+import com.revolut.task.exception.RequestValidationException;
 import com.revolut.task.service.AccountService;
+import com.revolut.task.util.ComponentsFactory;
 import com.revolut.task.util.JsonHelper;
 
 import java.math.BigDecimal;
@@ -12,6 +14,11 @@ import java.math.BigDecimal;
 import static spark.Spark.*;
 
 public class Application {
+
+    private static final int OK = 200;
+    private static final int BAD_REQUEST = 400;
+    private static final int NOT_FOUND = 404;
+    private static final int NOT_ACCEPTABLE = 406;
 
     public static void main(String[] args) {
 
@@ -24,46 +31,30 @@ public class Application {
         get("/balance/:number", (request, response) -> {
             try {
                 BigDecimal balance = accountService.getBalance(request.params(":number"));
-                response.status(200);
+                response.status(OK);
                 return balance;
             } catch (AccountNotFoundException ex) {
-                response.status(404);
-                return "Account not found: " + ex.getMessage();
+                response.status(NOT_FOUND);
+                return ex.getMessage();
             }
         });
 
         post("/transfer", (request, response) -> {
             try {
                 MoneyTransferDTO moneyTransferDTO = JsonHelper.fromJson(request.body(), MoneyTransferDTO.class);
-
-                if (moneyTransferDTO.getAccountNumberFrom() == null ||
-                        moneyTransferDTO.getAccountNumberTo() == null ||
-                        moneyTransferDTO.getAmount() == null ||
-                        moneyTransferDTO.getAccountNumberFrom().isEmpty() ||
-                        moneyTransferDTO.getAccountNumberTo().isEmpty()) {
-                    response.status(400);
-                    return "Request fields cannot be null or empty";
-                } else if (moneyTransferDTO.getAccountNumberFrom().equals(moneyTransferDTO.getAccountNumberTo())) {
-                    response.status(400);
-                    return "Accounts cannot be the same";
-                } else if (moneyTransferDTO.getAmount().compareTo(new BigDecimal(0)) <= 0) {
-                    response.status(400);
-                    return "Amount must be positive number";
-                }
                 accountService.transferMoney(moneyTransferDTO);
-            } catch (JsonSyntaxException ex) {
-                response.status(400);
+            } catch (JsonSyntaxException | RequestValidationException ex) {
+                response.status(BAD_REQUEST);
                 return "Invalid request: " + ex.getMessage();
             } catch (AccountNotFoundException ex) {
-                response.status(404);
-                return "Account not found: " + ex.getMessage();
+                response.status(NOT_FOUND);
+                return ex.getMessage();
             } catch (InvalidAmountException ex) {
-                response.status(406);
-                return "Amount exceeds balance";
+                response.status(NOT_ACCEPTABLE);
+                return ex.getMessage();
             }
-            response.status(200);
+            response.status(OK);
             return "The amount transferred successfully";
         });
-
     }
 }

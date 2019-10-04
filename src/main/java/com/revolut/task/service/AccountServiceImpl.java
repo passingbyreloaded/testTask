@@ -3,6 +3,7 @@ package com.revolut.task.service;
 import com.revolut.task.dto.MoneyTransferDTO;
 import com.revolut.task.exception.AccountNotFoundException;
 import com.revolut.task.exception.InvalidAmountException;
+import com.revolut.task.exception.RequestValidationException;
 import com.revolut.task.model.Account;
 import com.revolut.task.repository.AccountRepository;
 
@@ -17,7 +18,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public void transferMoney(MoneyTransferDTO moneyTransferDTO) throws AccountNotFoundException, InvalidAmountException {
+    public void transferMoney(MoneyTransferDTO moneyTransferDTO) {
+        validateTransferRequest(moneyTransferDTO);
 
         Account accountFrom = accountRepository.getByNumber(moneyTransferDTO.getAccountNumberFrom())
                 .orElseThrow(() -> new AccountNotFoundException(moneyTransferDTO.getAccountNumberFrom()));
@@ -34,6 +36,7 @@ public class AccountServiceImpl implements AccountService {
                 }
                 accountFrom.setBalance(accountFrom.getBalance().subtract(moneyTransferDTO.getAmount()));
                 accountTo.setBalance(accountTo.getBalance().add(moneyTransferDTO.getAmount()));
+                //todo delete!
                 System.out.println(accountFrom);
                 System.out.println(accountTo);
             }
@@ -41,9 +44,23 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public BigDecimal getBalance(String number) throws AccountNotFoundException {
-        Account account = accountRepository.getByNumber(number)
-                .orElseThrow(() -> new AccountNotFoundException(number));
-        return account.getBalance();
+    public BigDecimal getBalance(String number) {
+        return accountRepository.getByNumber(number)
+                .orElseThrow(() -> new AccountNotFoundException(number))
+                .getBalance();
+    }
+
+    private void validateTransferRequest(MoneyTransferDTO moneyTransferDTO) {
+        if (moneyTransferDTO.getAccountNumberFrom() == null ||
+                moneyTransferDTO.getAccountNumberTo() == null ||
+                moneyTransferDTO.getAmount() == null ||
+                moneyTransferDTO.getAccountNumberFrom().isEmpty() ||
+                moneyTransferDTO.getAccountNumberTo().isEmpty()) {
+            throw new RequestValidationException("Request fields cannot be null or empty");
+        } else if (moneyTransferDTO.getAccountNumberFrom().equals(moneyTransferDTO.getAccountNumberTo())) {
+            throw new RequestValidationException("Accounts cannot be the same");
+        } else if (moneyTransferDTO.getAmount().compareTo(new BigDecimal(0)) <= 0) {
+            throw new RequestValidationException("Amount must be positive number");
+        }
     }
 }

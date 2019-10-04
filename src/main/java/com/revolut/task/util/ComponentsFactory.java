@@ -1,4 +1,4 @@
-package com.revolut.task;
+package com.revolut.task.util;
 
 import com.revolut.task.repository.AccountRepository;
 import com.revolut.task.repository.InMemoryAccountRepository;
