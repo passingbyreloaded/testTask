@@ -20,9 +20,9 @@ public class AccountServiceImpl implements AccountService {
     public void transferMoney(MoneyTransferDTO moneyTransferDTO) throws AccountNotFoundException, InvalidAmountException {
 
         Account accountFrom = accountRepository.getByNumber(moneyTransferDTO.getAccountNumberFrom())
-                .orElseThrow(() -> new AccountNotFoundException("No account for number " + moneyTransferDTO.getAccountNumberFrom()));
+                .orElseThrow(() -> new AccountNotFoundException(moneyTransferDTO.getAccountNumberFrom()));
         Account accountTo = accountRepository.getByNumber(moneyTransferDTO.getAccountNumberTo())
-                .orElseThrow(() -> new AccountNotFoundException("No account for number " + moneyTransferDTO.getAccountNumberTo()));
+                .orElseThrow(() -> new AccountNotFoundException(moneyTransferDTO.getAccountNumberTo()));
 
         Object lock1 = accountFrom.getId() < accountTo.getId() ? accountFrom : accountTo;
         Object lock2 = accountFrom.getId() > accountTo.getId() ? accountFrom : accountTo;
@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public BigDecimal getBalance(String number) throws AccountNotFoundException {
         Account account = accountRepository.getByNumber(number)
-                .orElseThrow(() -> new AccountNotFoundException("No account for number " + number));
+                .orElseThrow(() -> new AccountNotFoundException(number));
         return account.getBalance();
     }
 }
