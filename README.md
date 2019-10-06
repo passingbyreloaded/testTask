@@ -1,4 +1,4 @@
-# API
+Available URL:
 - GET http://localhost:4567/balance/{accountNumber}
 - POST http://localhost:4567/transfer
 
