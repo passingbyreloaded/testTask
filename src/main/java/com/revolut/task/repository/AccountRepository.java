@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface AccountRepository {
 
     Optional<Account> getByNumber(String number);
+    
+    void save(Account account);
 }

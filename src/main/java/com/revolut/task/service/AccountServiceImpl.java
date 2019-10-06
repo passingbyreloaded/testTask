@@ -36,9 +36,6 @@ public class AccountServiceImpl implements AccountService {
                 }
                 accountFrom.setBalance(accountFrom.getBalance().subtract(moneyTransferDTO.getAmount()));
                 accountTo.setBalance(accountTo.getBalance().add(moneyTransferDTO.getAmount()));
-                //todo delete!
-                System.out.println(accountFrom);
-                System.out.println(accountTo);
             }
         }
     }
